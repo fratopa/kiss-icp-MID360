@@ -20,8 +20,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-cmake_minimum_required(VERSION 3.16...3.24)
-project(kiss_icp VERSION 0.2.2 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.16...3.26)
+project(kiss_icp VERSION 0.2.8 LANGUAGES CXX)
 
 set(ignore ${CATKIN_INSTALL_INTO_PREFIX_ROOT})
 set(CMAKE_BUILD_TYPE Release)
@@ -40,7 +40,7 @@ else()
   FetchContent_MakeAvailable(ext_kiss_icp_core)
 endif()
 
-if(CATKIN_DEVEL_PREFIX OR catkin_FOUND OR CATKIN_BUILD_BINARY_PACKAGE)
+if("$ENV{ROS_VERSION}" STREQUAL "1")
   message(STATUS "KISS-ICP-ROS1 wrapper will be compiled")
   find_package(
     catkin REQUIRED
@@ -59,7 +59,8 @@ if(CATKIN_DEVEL_PREFIX OR catkin_FOUND OR CATKIN_BUILD_BINARY_PACKAGE)
   target_include_directories(odometry_node PUBLIC include ${catkin_INCLUDE_DIRS})
   target_link_libraries(odometry_node kiss_icp::pipeline ${catkin_LIBRARIES})
   install(TARGETS odometry_node RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-elseif(DEFINED ENV{AMENT_PREFIX_PATH})
+  install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+elseif("$ENV{ROS_VERSION}" STREQUAL "2")
   message(STATUS "KISS-ICP-ROS2 wrapper will be compiled")
 
   find_package(ament_cmake REQUIRED)
